@@ -1,0 +1,508 @@
+2020-08-24 12:31:40,920 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.7.7 (default, May  7 2020, 21:25:33) [GCC 7.3.0]
+CUDA available: True
+CUDA_HOME: /usr/local/cuda
+NVCC: Cuda compilation tools, release 10.0, V10.0.130
+GPU 0,1: GeForce RTX 2080 Ti
+GCC: gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+PyTorch: 1.3.1
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - Intel(R) Math Kernel Library Version 2020.0.1 Product Build 20200208 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v0.20.5 (Git Hash 0125f28c61c1f822fd48570b4c1066f96fcb9b2e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CUDA Runtime 10.0
+  - NVCC architecture flags: -gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_50,code=compute_50
+  - CuDNN 7.6.5
+    - Built with CuDNN 7.6.4
+  - Magma 2.5.0
+  - Build settings: BLAS=MKL, BUILD_NAMEDTENSOR=OFF, BUILD_TYPE=Release, CXX_FLAGS=-fvisibility-inlines-hidden -std=c++11 -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -I/opt/conda/conda-bld/pytorch_1574381331675/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place/include -fdebug-prefix-map=/opt/conda/conda-bld/pytorch_1574381331675/work=/usr/local/src/conda/pytorch-1.3.1 -fdebug-prefix-map=/opt/conda/conda-bld/pytorch_1574381331675/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place=/usr/local/src/conda-prefix -Wno-deprecated -fvisibility-inlines-hidden -fopenmp -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -O2 -fPIC -Wno-narrowing -Wall -Wextra -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Wno-stringop-overflow, DISABLE_NUMA=1, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, USE_CUDA=True, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_STATIC_DISPATCH=OFF, 
+
+TorchVision: 0.4.2
+OpenCV: 4.3.0
+MMCV: 1.0.2
+MMDetection: 2.3.0rc0+unknown
+MMDetection3D: 0.0.0rc0+unknown
+MMDetection3D Compiler: GCC 5.4
+MMDetection3D CUDA Compiler: 10.1
+------------------------------------------------------------
+
+2020-08-24 12:31:40,921 - mmdet - INFO - Distributed training: False
+2020-08-24 12:31:43,301 - mmdet - INFO - Config:
+voxel_size = [0.16, 0.16, 4]
+model = dict(
+    type='VoxelNet',
+    voxel_layer=dict(
+        max_num_points=32,
+        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1],
+        voxel_size=[0.16, 0.16, 4],
+        max_voxels=(16000, 40000)),
+    voxel_encoder=dict(
+        type='PillarFeatureNet',
+        in_channels=4,
+        feat_channels=[64],
+        with_distance=False,
+        voxel_size=[0.16, 0.16, 4],
+        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+    middle_encoder=dict(
+        type='PointPillarsScatter', in_channels=64, output_shape=[496, 432]),
+    backbone=dict(
+        type='SECOND_MB2',
+        in_channels=64,
+        layer_nums=[3, 5, 5],
+        layer_strides=[2, 2, 2],
+        out_channels=[64, 128, 256]),
+    neck=dict(
+        type='SECONDFPN',
+        in_channels=[64, 128, 256],
+        upsample_strides=[1, 2, 4],
+        out_channels=[128, 128, 128]),
+    bbox_head=dict(
+        type='Anchor3DHead',
+        num_classes=3,
+        in_channels=384,
+        feat_channels=384,
+        use_direction_classifier=True,
+        anchor_generator=dict(
+            type='Anchor3DRangeGenerator',
+            ranges=[[0, -39.68, -0.6, 70.4, 39.68, -0.6],
+                    [0, -39.68, -0.6, 70.4, 39.68, -0.6],
+                    [0, -39.68, -1.78, 70.4, 39.68, -1.78]],
+            sizes=[[0.6, 0.8, 1.73], [0.6, 1.76, 1.73], [1.6, 3.9, 1.56]],
+            rotations=[0, 1.57],
+            reshape_out=False),
+        diff_rad_by_sin=True,
+        bbox_coder=dict(type='DeltaXYZWLHRBBoxCoder'),
+        loss_cls=dict(
+            type='FocalLoss',
+            use_sigmoid=True,
+            gamma=2.0,
+            alpha=0.25,
+            loss_weight=1.0),
+        loss_bbox=dict(
+            type='SmoothL1Loss', beta=0.1111111111111111, loss_weight=2.0),
+        loss_dir=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.2)))
+train_cfg = dict(
+    assigner=[
+        dict(
+            type='MaxIoUAssigner',
+            iou_calculator=dict(type='BboxOverlapsNearest3D'),
+            pos_iou_thr=0.5,
+            neg_iou_thr=0.35,
+            min_pos_iou=0.35,
+            ignore_iof_thr=-1),
+        dict(
+            type='MaxIoUAssigner',
+            iou_calculator=dict(type='BboxOverlapsNearest3D'),
+            pos_iou_thr=0.5,
+            neg_iou_thr=0.35,
+            min_pos_iou=0.35,
+            ignore_iof_thr=-1),
+        dict(
+            type='MaxIoUAssigner',
+            iou_calculator=dict(type='BboxOverlapsNearest3D'),
+            pos_iou_thr=0.6,
+            neg_iou_thr=0.45,
+            min_pos_iou=0.45,
+            ignore_iof_thr=-1)
+    ],
+    allowed_border=0,
+    pos_weight=-1,
+    debug=False)
+test_cfg = dict(
+    use_rotate_nms=True,
+    nms_across_levels=False,
+    nms_thr=0.01,
+    score_thr=0.1,
+    min_bbox_size=0,
+    nms_pre=100,
+    max_num=50)
+dataset_type = 'KittiDataset'
+data_root = '/home/mk/mmdetection3d-master/data/kitti/'
+class_names = ['Pedestrian', 'Cyclist', 'Car']
+point_cloud_range = [0, -39.68, -3, 69.12, 39.68, 1]
+input_modality = dict(use_lidar=True, use_camera=False)
+db_sampler = dict(
+    data_root='/home/mk/mmdetection3d-master/data/kitti/',
+    info_path=
+    '/home/mk/mmdetection3d-master/data/kitti/kitti_dbinfos_train.pkl',
+    rate=1.0,
+    prepare=dict(
+        filter_by_difficulty=[-1],
+        filter_by_min_points=dict(Car=5, Pedestrian=10, Cyclist=10)),
+    classes=['Pedestrian', 'Cyclist', 'Car'],
+    sample_groups=dict(Car=15, Pedestrian=10, Cyclist=10))
+file_client_args = dict(backend='disk')
+train_pipeline = [
+    dict(type='LoadPointsFromFile', load_dim=4, use_dim=4),
+    dict(type='LoadAnnotations3D', with_bbox_3d=True, with_label_3d=True),
+    dict(
+        type='ObjectSample',
+        db_sampler=dict(
+            data_root='/home/mk/mmdetection3d-master/data/kitti/',
+            info_path=
+            '/home/mk/mmdetection3d-master/data/kitti/kitti_dbinfos_train.pkl',
+            rate=1.0,
+            prepare=dict(
+                filter_by_difficulty=[-1],
+                filter_by_min_points=dict(Car=5, Pedestrian=10, Cyclist=10)),
+            classes=['Pedestrian', 'Cyclist', 'Car'],
+            sample_groups=dict(Car=15, Pedestrian=10, Cyclist=10))),
+    dict(
+        type='ObjectNoise',
+        num_try=100,
+        translation_std=[0.25, 0.25, 0.25],
+        global_rot_range=[0.0, 0.0],
+        rot_range=[-0.15707963267, 0.15707963267]),
+    dict(type='RandomFlip3D', flip_ratio_bev_horizontal=0.5),
+    dict(
+        type='GlobalRotScaleTrans',
+        rot_range=[-0.78539816, 0.78539816],
+        scale_ratio_range=[0.95, 1.05]),
+    dict(
+        type='PointsRangeFilter',
+        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+    dict(
+        type='ObjectRangeFilter',
+        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+    dict(type='PointShuffle'),
+    dict(
+        type='DefaultFormatBundle3D',
+        class_names=['Pedestrian', 'Cyclist', 'Car']),
+    dict(type='Collect3D', keys=['points', 'gt_bboxes_3d', 'gt_labels_3d'])
+]
+test_pipeline = [
+    dict(type='LoadPointsFromFile', load_dim=4, use_dim=4),
+    dict(
+        type='MultiScaleFlipAug3D',
+        img_scale=(1333, 800),
+        pts_scale_ratio=1,
+        flip=False,
+        transforms=[
+            dict(
+                type='GlobalRotScaleTrans',
+                rot_range=[0, 0],
+                scale_ratio_range=[1.0, 1.0],
+                translation_std=[0, 0, 0]),
+            dict(type='RandomFlip3D'),
+            dict(
+                type='PointsRangeFilter',
+                point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+            dict(
+                type='DefaultFormatBundle3D',
+                class_names=['Pedestrian', 'Cyclist', 'Car'],
+                with_label=False),
+            dict(type='Collect3D', keys=['points'])
+        ])
+]
+data = dict(
+    samples_per_gpu=6,
+    workers_per_gpu=4,
+    train=dict(
+        type='RepeatDataset',
+        times=2,
+        dataset=dict(
+            type='KittiDataset',
+            data_root='data/kitti/',
+            ann_file='data/kitti/kitti_infos_train.pkl',
+            split='training',
+            pts_prefix='velodyne_reduced',
+            pipeline=[
+                dict(type='LoadPointsFromFile', load_dim=4, use_dim=4),
+                dict(
+                    type='LoadAnnotations3D',
+                    with_bbox_3d=True,
+                    with_label_3d=True),
+                dict(
+                    type='ObjectSample',
+                    db_sampler=dict(
+                        data_root='/home/mk/mmdetection3d-master/data/kitti/',
+                        info_path=
+                        '/home/mk/mmdetection3d-master/data/kitti/kitti_dbinfos_train.pkl',
+                        rate=1.0,
+                        prepare=dict(
+                            filter_by_difficulty=[-1],
+                            filter_by_min_points=dict(
+                                Car=5, Pedestrian=10, Cyclist=10)),
+                        classes=['Pedestrian', 'Cyclist', 'Car'],
+                        sample_groups=dict(Car=15, Pedestrian=10,
+                                           Cyclist=10))),
+                dict(
+                    type='ObjectNoise',
+                    num_try=100,
+                    translation_std=[0.25, 0.25, 0.25],
+                    global_rot_range=[0.0, 0.0],
+                    rot_range=[-0.15707963267, 0.15707963267]),
+                dict(type='RandomFlip3D', flip_ratio_bev_horizontal=0.5),
+                dict(
+                    type='GlobalRotScaleTrans',
+                    rot_range=[-0.78539816, 0.78539816],
+                    scale_ratio_range=[0.95, 1.05]),
+                dict(
+                    type='PointsRangeFilter',
+                    point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+                dict(
+                    type='ObjectRangeFilter',
+                    point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+                dict(type='PointShuffle'),
+                dict(
+                    type='DefaultFormatBundle3D',
+                    class_names=['Pedestrian', 'Cyclist', 'Car']),
+                dict(
+                    type='Collect3D',
+                    keys=['points', 'gt_bboxes_3d', 'gt_labels_3d'])
+            ],
+            modality=dict(use_lidar=True, use_camera=False),
+            classes=['Pedestrian', 'Cyclist', 'Car'],
+            test_mode=False,
+            box_type_3d='LiDAR')),
+    val=dict(
+        type='KittiDataset',
+        data_root='data/kitti/',
+        ann_file='data/kitti/kitti_infos_val.pkl',
+        split='training',
+        pts_prefix='velodyne_reduced',
+        pipeline=[
+            dict(type='LoadPointsFromFile', load_dim=4, use_dim=4),
+            dict(
+                type='MultiScaleFlipAug3D',
+                img_scale=(1333, 800),
+                pts_scale_ratio=1,
+                flip=False,
+                transforms=[
+                    dict(
+                        type='GlobalRotScaleTrans',
+                        rot_range=[0, 0],
+                        scale_ratio_range=[1.0, 1.0],
+                        translation_std=[0, 0, 0]),
+                    dict(type='RandomFlip3D'),
+                    dict(
+                        type='PointsRangeFilter',
+                        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+                    dict(
+                        type='DefaultFormatBundle3D',
+                        class_names=['Pedestrian', 'Cyclist', 'Car'],
+                        with_label=False),
+                    dict(type='Collect3D', keys=['points'])
+                ])
+        ],
+        modality=dict(use_lidar=True, use_camera=False),
+        classes=['Pedestrian', 'Cyclist', 'Car'],
+        test_mode=True,
+        box_type_3d='LiDAR'),
+    test=dict(
+        type='KittiDataset',
+        data_root='data/kitti/',
+        ann_file='data/kitti/kitti_infos_val.pkl',
+        split='training',
+        pts_prefix='velodyne_reduced',
+        pipeline=[
+            dict(type='LoadPointsFromFile', load_dim=4, use_dim=4),
+            dict(
+                type='MultiScaleFlipAug3D',
+                img_scale=(1333, 800),
+                pts_scale_ratio=1,
+                flip=False,
+                transforms=[
+                    dict(
+                        type='GlobalRotScaleTrans',
+                        rot_range=[0, 0],
+                        scale_ratio_range=[1.0, 1.0],
+                        translation_std=[0, 0, 0]),
+                    dict(type='RandomFlip3D'),
+                    dict(
+                        type='PointsRangeFilter',
+                        point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1]),
+                    dict(
+                        type='DefaultFormatBundle3D',
+                        class_names=['Pedestrian', 'Cyclist', 'Car'],
+                        with_label=False),
+                    dict(type='Collect3D', keys=['points'])
+                ])
+        ],
+        modality=dict(use_lidar=True, use_camera=False),
+        classes=['Pedestrian', 'Cyclist', 'Car'],
+        test_mode=True,
+        box_type_3d='LiDAR'))
+evaluation = dict(interval=5)
+lr = 0.001
+optimizer = dict(type='AdamW', lr=0.001, betas=(0.95, 0.99), weight_decay=0.01)
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+lr_config = dict(
+    policy='cyclic',
+    target_ratio=(10, 0.0001),
+    cyclic_times=1,
+    step_ratio_up=0.4)
+momentum_config = dict(
+    policy='cyclic',
+    target_ratio=(0.8947368421052632, 1),
+    cyclic_times=1,
+    step_ratio_up=0.4)
+total_epochs = 100
+checkpoint_config = dict(interval=1)
+log_config = dict(
+    interval=50,
+    hooks=[dict(type='TextLoggerHook'),
+           dict(type='TensorboardLoggerHook')])
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+work_dir = 'benchmark_model/pp_exp'
+load_from = None
+resume_from = None
+workflow = [('train', 1)]
+gpu_ids = [0]
+
+2020-08-24 12:31:43,301 - mmdet - INFO - Set random seed to 0, deterministic: False
+2020-08-24 12:31:43,354 - mmdet - INFO - Model:
+VoxelNet(
+  (backbone): SECOND_MB2(
+    (blocks): ModuleList(
+      (0): Sequential(
+        (0): ZeroPad2d(padding=(1, 1, 1, 1), value=0.0)
+        (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64, bias=False)
+        (2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (5): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64, bias=False)
+        (8): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (9): ReLU(inplace=True)
+        (10): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (11): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (12): ReLU(inplace=True)
+        (13): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64, bias=False)
+        (14): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (15): ReLU(inplace=True)
+        (16): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (17): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (18): ReLU(inplace=True)
+        (19): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64, bias=False)
+        (20): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (21): ReLU(inplace=True)
+        (22): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (23): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (24): ReLU(inplace=True)
+      )
+      (1): Sequential(
+        (0): ZeroPad2d(padding=(1, 1, 1, 1), value=0.0)
+        (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64, bias=False)
+        (2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (3): ReLU()
+        (4): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (5): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+        (8): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (9): ReLU(inplace=True)
+        (10): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (11): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (12): ReLU(inplace=True)
+        (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+        (14): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (15): ReLU(inplace=True)
+        (16): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (17): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (18): ReLU(inplace=True)
+        (19): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+        (20): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (21): ReLU(inplace=True)
+        (22): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (23): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (24): ReLU(inplace=True)
+        (25): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+        (26): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (27): ReLU(inplace=True)
+        (28): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (29): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (30): ReLU(inplace=True)
+        (31): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+        (32): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (33): ReLU(inplace=True)
+        (34): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (35): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (36): ReLU(inplace=True)
+      )
+      (2): Sequential(
+        (0): ZeroPad2d(padding=(1, 1, 1, 1), value=0.0)
+        (1): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=128, bias=False)
+        (2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (3): ReLU()
+        (4): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (5): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): ReLU()
+        (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+        (8): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (9): ReLU(inplace=True)
+        (10): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (11): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (12): ReLU(inplace=True)
+        (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+        (14): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (15): ReLU(inplace=True)
+        (16): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (17): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (18): ReLU(inplace=True)
+        (19): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+        (20): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (21): ReLU(inplace=True)
+        (22): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (23): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (24): ReLU(inplace=True)
+        (25): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+        (26): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (27): ReLU(inplace=True)
+        (28): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (29): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (30): ReLU(inplace=True)
+        (31): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+        (32): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (33): ReLU(inplace=True)
+        (34): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (35): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (36): ReLU(inplace=True)
+      )
+    )
+  )
+  (neck): SECONDFPN(
+    (deblocks): ModuleList(
+      (0): Sequential(
+        (0): ConvTranspose2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Sequential(
+        (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (2): Sequential(
+        (0): ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(4, 4), bias=False)
+        (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+    )
+  )
+  (bbox_head): Anchor3DHead(
+    (loss_cls): FocalLoss()
+    (loss_bbox): SmoothL1Loss()
+    (loss_dir): CrossEntropyLoss()
+    (conv_cls): Conv2d(384, 18, kernel_size=(1, 1), stride=(1, 1))
+    (conv_reg): Conv2d(384, 42, kernel_size=(1, 1), stride=(1, 1))
+    (conv_dir_cls): Conv2d(384, 12, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (voxel_layer): Voxelization(voxel_size=[0.16, 0.16, 4], point_cloud_range=[0, -39.68, -3, 69.12, 39.68, 1], max_num_points=32, max_voxels=(16000, 40000))
+  (voxel_encoder): PillarFeatureNet(
+    (pfn_layers): ModuleList(
+      (0): PFNLayer(
+        (norm): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        (linear): Linear(in_features=9, out_features=64, bias=False)
+      )
+    )
+  )
+  (middle_encoder): PointPillarsScatter()
+)
