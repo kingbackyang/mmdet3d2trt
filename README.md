@@ -6,7 +6,7 @@ This is an interesting and practical project.This project provides a complete pi
 
 > [!NOTE]
 >
-> It has been a long time since we started this project, and readme needs some time to recall
+> It has been a long time since I started this project, and readme needs some time to recall
 
 ### Description
 
